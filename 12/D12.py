@@ -5,6 +5,11 @@ def read_input_file(file_path):
         return [line.strip() for line in file]
 
 def calculate_region_price_part1(grid):
+    """ 
+    Traditional BFS approach
+    We check every time in all four directions if the bordering cells are different or off the board
+    If not we have found an edge and increase our score
+    """
     rows, cols = len(grid), len(grid[0])
     visited = [[False for _ in range(cols)] for _ in range(rows)]
 
@@ -48,10 +53,15 @@ def calculate_region_price_part1(grid):
     return total_price
 
 def calculate_region_price_part2(grid):
+    """ 
+    Extended BFS approach
+    We find all of our regions and calculate all the straight edges for that region.
+    """
     rows, cols = len(grid), len(grid[0])
     visited = [[False for _ in range(cols)] for _ in range(rows)]
 
     def bfs_collect_region(start_r, start_c):
+        """ BFS - Takes starting point as input and finds all connected cells """
         queue = deque([(start_r, start_c)])
         visited[start_r][start_c] = True
         region_cells = []
@@ -71,6 +81,11 @@ def calculate_region_price_part2(grid):
         return region_cells
 
     def calculate_side_lines(region_cells):
+        """ 
+        We traverse all the cells in the minimal box that can be drawn around our cells 
+        For every cell we check if this is an edge and the cells on the side of our directional check are also pointing that direction. 
+        If none of the neighbouring cells point that direction we have found a new edge and increase the counter
+        """
         directions = ((1, 0), (0, 1), (-1, 0), (0, -1))
         lines = set()
         count = 0
