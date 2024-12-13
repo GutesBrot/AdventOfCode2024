@@ -120,7 +120,7 @@ def calculate_region_price_part2(grid):
     return total_price
 
 if __name__ == "__main__":
-    input_file = "input.txt"
+    input_file = "Input.txt"
     
     garden_map = read_input_file(input_file)
 
