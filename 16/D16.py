@@ -24,12 +24,12 @@ def find_start_and_end(maze):
                 end = (i, j)
     return start, end
 
-def bfs_min_score(maze, start, end):
+def bfs_find_paths(maze, start, end):
     rows, cols = len(maze), len(maze[0])
-    queue = deque([(start[0], start[1], 0, 0, [(start[0], start[1])])])  # (row, col, direction, score)
+    queue = deque([(start[0], start[1], 0, 0, [])])  # (row, col, direction, score, path)
     visited = {}
-    min_score = float('inf')
     best_paths = []
+    min_score = float('inf')
 
     while queue:
         x, y, dir_idx, score, path = queue.popleft()
@@ -61,24 +61,33 @@ def bfs_min_score(maze, start, end):
                 new_dir_idx = (dir_idx + i) % 4
                 new_score = score + 1000
 
-                if (x, y, new_dir_idx) not in visited or visited[(x, y, new_dir_idx)] > new_score:
+                if (x, y, new_dir_idx) not in visited or visited[(x, y, new_dir_idx)] >= new_score:
                     visited[(x, y, new_dir_idx)] = new_score
                     queue.append((x, y, new_dir_idx, new_score, path))
 
     return min_score, best_paths
 
-def find_number_tiles(paths):
+def find_tiles_in_best_paths(maze, best_paths):
     tiles = set()
-    for path in paths:
-        for x, y in path: 
+    for path in best_paths:
+        for x, y in path:
             tiles.add((x, y))
-    return len(tiles)
+    return tiles
 
 if __name__ == "__main__":
-    input_file = "test.txt"
+    input_file = "input.txt"
     maze = parse_input(input_file)
     start, end = find_start_and_end(maze)
-    min_score, best_paths = bfs_min_score(maze, start, end)
-    tiles_number = find_number_tiles(best_paths)
-    print(f"The lowest score the Reindeer could possibly get is: {min_score}")
-    print(f"The number of tiles in the best path is: {tiles_number}")
+    min_score, best_paths = bfs_find_paths(maze, start, end)
+    tiles = find_tiles_in_best_paths(maze, best_paths)
+    print(f"The minimum score is: {min_score}")
+    print(f"The number of tiles part of at least one best path: {len(tiles)}")
+
+    # Optional: Print the maze with best path tiles marked
+    for i in range(len(maze)):
+        for j in range(len(maze[0])):
+            if (i, j) in tiles:
+                print('O', end='')
+            else:
+                print(maze[i][j], end='')
+        print()
